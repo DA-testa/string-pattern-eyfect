@@ -3,12 +3,14 @@
 from sys import stdin
 
 def read_input():
-    mode = input("Enter mode of input F or I: ").strip().upper()
-    if mode == "I":
+    file = None
+    TEST_FILE = "./tests/06"
+
+    input_mode = input("Enter mode of input (F for file or I for stdin): ").strip().upper()
+    if "I" in input_mode: 
         file = stdin
-    elif mode == "F":
-        file_path = input("Enter file path: ")
-        file = open(file_path, encoding="UTF-8")
+    elif "F" in input_mode: 
+        file = open(TEST_FILE, encoding="UTF-8")
     else:
         exit("Invalid input mode")
 
@@ -19,31 +21,34 @@ def read_input():
 
     return (pattern, text)
 
-def print_occurrences(output):
-    if output:
-        print(' '.join(map(str, output)))
+def print_occurrences(occurrences):
+    # this function should control output, it doesn't need any return
+    if occurrences:
+        print(' '.join(map(str, occurrences)))
     else:
         print("No occurrences found")
 
-def get_occurrences(pattern, text):
+def find_occurrences(pattern, text):
     prime = 17
     bucket = 256
 
-    def hasher(string: str) -> int:
+    def hash_string(string: str) -> int:
+        nonlocal prime, bucket
         result = 0
         for char in string:
             result = (prime * result + ord(char)) % bucket
         return result
 
-    t_length = len(text)
-    p_length = len(pattern)
-    p_hash = hasher(pattern)
+    text_length = len(text)
+    pattern_length = len(pattern)
+    pattern_hash = hash_string(pattern)
 
-    for i in range(t_length-p_length+1):
-        window = text[i:i+p_length]
-        if p_hash == hasher(window):
+    for i in range(text_length-pattern_length+1):
+        window = text[i:i+pattern_length]
+        if pattern_hash == hash_string(window):
             if pattern == window:
                 yield i
 
 if __name__ == '__main__':
-    print_occurrences(list(get_occurrences(*read_input())))
+    occurrences = list(find_occurrences(*read_input()))
+    print_occurrences(occurrences)
