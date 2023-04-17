@@ -1,38 +1,53 @@
 #Vasīlijs Dvils-Dmitrijevs
 
 def read_input():
-    input_choice = input().upper()
-    if input_choice == "I":
-        pattern = input().rstrip()
-        text = input().rstrip()
-    elif input_choice == "F":
-        filename = input().rstrip()
-        with open(filename) as f:
-            pattern = f.readline().rstrip()
-            text = f.readline().rstrip()
-    return pattern, text
+    # this function needs to aquire input both from keyboard and file
+    # as before, use capital i (input from keyboard) and capital f (input from file) to choose which input type will follow
+
+
+    # after input type choice
+    # read two lines 
+    # first line is pattern 
+    # second line is text in which to look for pattern 
+
+    # return both lines in one return
+
+    # this is the sample return, notice the rstrip function
+    return (input().rstrip(), input().rstrip())
+    choice = input()
+
+    if 'I'in(choice):
+        return (input().rstrip(), input().rstrip())
+    else:
+        with open('tests/06', "r") as fails:
+            return (fails.readline().rstrip(),fails.readline().rstrip())
 
 def print_occurrences(output):
+    # this function should control output, it doesn't need any return
     print(' '.join(map(str, output)))
 
 def get_occurrences(pattern, text):
-    occurrences = []
-    if len(pattern) > len(text):
-        return occurrences
-    prime = 1000000007
-    x = 263
-    p_hash = sum(ord(pattern[i]) * pow(x, i, prime) for i in range(len(pattern))) % prime
-    t_hash = sum(ord(text[i]) * pow(x, i, prime) for i in range(len(pattern))) % prime
-    x_to_len_pattern = pow(x, len(pattern), prime)
-    for i in range(len(text) - len(pattern) + 1):
-        if p_hash == t_hash:
-            if text[i:i+len(pattern)] == pattern:
-                occurrences.append(i)
-        if i < len(text) - len(pattern):
-            t_hash = (t_hash - ord(text[i]) * pow(x, len(pattern)-1, prime)) % prime
-            t_hash = (t_hash * x + ord(text[i+len(pattern)])) % prime
-            t_hash = (t_hash + prime) % prime
-    return occurrences
+    # this function should find the occurances using Rabin Karp alghoritm 
 
+    # and return an iterable variable
+    return [0]
+
+    listik = []
+    mejik_namber = 7
+    mejik_mef = lambda s: sum(ord(c) for c in s)
+
+    pattern_hash = mejik_mef(pattern) * mejik_namber
+
+    for i in range(len(text) - len(pattern) + 1):
+        substring = text[i:i+len(pattern)]
+        substring_hash = mejik_mef(substring) * mejik_namber
+
+        if substring_hash == pattern_hash:
+            if substring == pattern:
+                listik.append(i)
+
+    return listik
+
+# this part launches the functions
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
