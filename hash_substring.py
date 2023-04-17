@@ -12,10 +12,8 @@ def read_input():
                 pattern = f.readline().rstrip()
                 text = f.readline().rstrip()
     return pattern, text
-
 def print_occurrences(output):
     print(' '.join(map(str, output)))
-
 def get_occurrences(pattern, text):
     prime = 1
     p_len, t_len = len(pattern), len(text)
@@ -29,6 +27,5 @@ def get_occurrences(pattern, text):
         if i < t_len - p_len:
             text_hash = (text_hash - ord(text[i])) / prime + ord(text[i+p_len]) * pow(prime, p_len-1)
     return occurrences
-
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
