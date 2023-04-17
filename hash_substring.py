@@ -3,7 +3,6 @@
 def read_input():
     choice = input()
     if 'I' in choice:
-        # input from keyboard
         pattern = input().rstrip()
         text = input().rstrip()
     else:
