@@ -3,52 +3,44 @@
 from sys import stdin
 
 def read_input():
-    file = None
-    TEST_FILE = "./tests/06"
+file = None
+test_file = "./tests/06"
 
-    input_mode = input("Enter mode of input (F for file or I for stdin): ").strip().upper()
-    if "I" in input_mode: 
-        file = stdin
-    elif "F" in input_mode: 
-        file = open(TEST_FILE, encoding="UTF-8")
-    else:
-        exit("Invalid input mode")
+mode = input()
+if "I" in mode:
+    file = stdin
 
-    pattern = file.readline().rstrip()
-    text = file.readline().rstrip()
+elif "F" in mode:
+    file = open(test_file, encoding="UTF-8")
 
-    file.close()
+else:
+    exit()
 
-    return (pattern, text)
+pattern = file.readline().rstrip()
+text = file.readline().rstrip()
 
-def print_occurrences(occurrences):
-    # this function should control output, it doesn't need any return
-    if occurrences:
-        print(' '.join(map(str, occurrences)))
-    else:
-        print("No occurrences found")
+return (pattern, text)
+def print_occurrences(output):
+print(' '.join(map(str, output)))
 
-def find_occurrences(pattern, text):
-    prime = 17
-    bucket = 256
+def get_occurrences(pattern, text):
+prime = 17
+bucket = 256
+def hasher(string):
+nonlocal prime, bucket
+result = 0
+for char in string:
+result = (prime * result + ord(char)) % bucket
+return result
+t_length = len(text)
+p_length = len(pattern)
+p_hash = hasher(pattern)
 
-    def hash_string(string: str) -> int:
-        nonlocal prime, bucket
-        result = 0
-        for char in string:
-            result = (prime * result + ord(char)) % bucket
-        return result
-
-    text_length = len(text)
-    pattern_length = len(pattern)
-    pattern_hash = hash_string(pattern)
-
-    for i in range(text_length-pattern_length+1):
-        window = text[i:i+pattern_length]
-        if pattern_hash == hash_string(window):
-            if pattern == window:
-                yield i
-
-if __name__ == '__main__':
-    occurrences = list(find_occurrences(*read_input()))
-    print_occurrences(occurrences)
+window = None
+for i in range(t_length - p_length + 1):
+    window = text[i:i + p_length]
+    if p_hash == hasher(window):
+        if pattern == window:
+            yield i
+            if name == 'main':
+print_occurrences(get_occurrences(*read_input()))
