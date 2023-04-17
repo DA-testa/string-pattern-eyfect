@@ -1,40 +1,42 @@
 #Vasīlijs Dvils-Dmitrijevs
 
 def read_input():
-   def read_input():
-    
-    return (input().rstrip(), input().rstrip())
-    choice = input()
-
-    if 'I'in(choice):
-        return (input().rstrip(), input().rstrip())
-    else:
-        with open('tests/06', "r") as fails:
-            return (fails.readline().rstrip(),fails.readline().rstrip())
+    fileorno = input("Enter I for input from user or F for input from file: ")
+    pattern = ""
+    text = ""
+    if "I" in fileorno or "i" in fileorno:
+        pattern = input("Enter pattern: ").rstrip()
+        text = input("Enter text: ").rstrip()
+    elif "F" in fileorno or "f" in fileorno:
+        filename = input("Enter filename: ")
+        try:
+            with open(filename, 'r') as f:
+                pattern = f.readline().rstrip()
+                text = f.readline().rstrip()
+        except FileNotFoundError:
+            print("File not found.")
+            exit(0)
+    return pattern, text
 
 def print_occurrences(output):
-    
-    print(' '.join(map(str, output)))
+    if output:
+        print(' '.join(map(str, output)))
+    else:
+        print("No occurrences found.")
 
 def get_occurrences(pattern, text):
-   
-    return [0]
-
-    listik = []
-    mejik_namber = 7
-    mejik_mef = lambda s: sum(ord(c) for c in s)
-
-    pattern_hash = mejik_mef(pattern) * mejik_namber
-
-    for i in range(len(text) - len(pattern) + 1):
-        substring = text[i:i+len(pattern)]
-        substring_hash = mejik_mef(substring) * mejik_namber
-
-        if substring_hash == pattern_hash:
-            if substring == pattern:
-                listik.append(i)
-
-    return listik
+    prime = 1_000_000_007
+    p_len, t_len = len(pattern), len(text)
+    pattern_hash = sum(ord(pattern[i]) * pow(prime, i) for i in range(p_len))
+    text_hash = sum(ord(text[i]) * pow(prime, i) for i in range(p_len))
+    occurrences = []
+    for i in range(t_len - p_len + 1):
+        if pattern_hash == text_hash:
+            if pattern == text[i:i+p_len]:
+                occurrences.append(i)
+        if i < t_len - p_len:
+            text_hash = (text_hash - ord(text[i]) * pow(prime, p_len-1)) * prime + ord(text[i+p_len])
+    return occurrences
 
 if __name__ == '__main__':
     print_occurrences(get_occurrences(*read_input()))
