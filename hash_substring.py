@@ -1,62 +1,51 @@
+#Vasīlijs Dvils-Dmitrijevs
+
+import argparse
+
 def read_input():
-    choice = input("Enter input type (I for keyboard input, F for file input): ")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file", help="path to input file")
+    parser.add_argument("-p", "--pattern", help="pattern to search")
+    parser.add_argument("-t", "--text", help="text to search in")
+    args = parser.parse_args()
 
-    if choice.upper() == 'I':
-        # input from keyboard
-        pattern = input("Enter pattern: ").strip()
-        text = input("Enter text: ").strip()
+    if args.file:
+        with open(args.file, "r", encoding="UTF-8") as file:
+            pattern = file.readline().rstrip()
+            text = file.readline().rstrip()
+    elif args.pattern and args.text:
+        pattern = args.pattern
+        text = args.text
     else:
-        # input from file
-        with open('tests/06.txt', "r") as f:
-            pattern = f.readline().strip()
-            text = f.readline().strip()
+        exit()
 
-    return pattern, text
-
+    return (pattern, text)
 
 def print_occurrences(output):
-    if output:
-        print(' '.join(map(str, output)))
-    else:
-        print("Pattern not found in text.")
-
+    # this function should control output, it doesn't need any return
+    print(' '.join(map(str, output)))
 
 def get_occurrences(pattern, text):
-    # Rabin-Karp algorithm for pattern matching
-    occurrences = []
-    prime = 101  # prime number for hashing
-    d = 256     # number of characters in the input alphabet
+    prime = 17
+    bucket = 256
+    def hasher(string: str) -> int:
+        nonlocal prime, bucket
+        result = 0
+        for char in string:
+            result = (prime * result + ord(char)) % bucket
+        return result
 
-    def hash(string, length):
-        # function to calculate the hash value of a string
-        h = 0
-        for i in range(length):
-            h = (d*h + ord(string[i])) % prime
-        return h
+    t_length = len(text)
+    p_length = len(pattern)
+    p_hash = hasher(pattern)
 
-    def rehash(string, old_index, new_index, old_hash, length):
-        # function to update the hash value of a string after a shift
-        new_hash = old_hash - ord(string[old_index])*pow(d, length-1)
-        new_hash = (new_hash*d + ord(string[new_index])) % prime
-        return new_hash
+    window = None
+    for i in range(t_length-p_length+1):
+        window = text[i:i+p_length]
+        if p_hash == hasher(window):
+            if pattern == window:
+                yield i
 
-    m = len(pattern)
-    n = len(text)
-    p_hash = hash(pattern, m)
-    t_hash = hash(text, m)
-
-    for i in range(n-m+1):
-        if p_hash == t_hash:
-            if text[i:i+m] == pattern:
-                occurrences.append(i)
-
-        if i < n-m:
-            t_hash = rehash(text, i, i+m, t_hash, m)
-
-    return occurrences
-
-
+# this part launches the functions
 if __name__ == '__main__':
-    pattern, text = read_input()
-    occurrences = get_occurrences(pattern, text)
-    print_occurrences(occurrences)
+    print_occurrences(get_occurrences(*read_input()))
