@@ -1,43 +1,32 @@
 #Vasīlijs Dvils-Dmitrijevs
 
 def read_input():
-   
     choice = input()
     if 'I' in choice:
-  
-        return (input().rstrip(), input().rstrip())
+        # input from keyboard
+        pattern = input().rstrip()
+        text = input().rstrip()
     else:
-        with open('tests/06', 'r') as file:
-            return (file.readline().rstrip(), file.readline().rstrip())
+        with open('tests/06', "r") as f:
+            pattern = f.readline().rstrip()
+            text = f.readline().rstrip()
+    return (pattern, text)
 
 def print_occurrences(output):
-    
     print(' '.join(map(str, output)))
 
 def get_occurrences(pattern, text):
-    
     occurrences = []
-    prime = 10 ** 9 + 7
-    base = 131
-    pattern_len = len(pattern)
-    text_len = len(text)
-
-    
-    pattern_hash = sum(ord(c) * pow(base, i, prime) for i, c in enumerate(pattern)) % prime
-    window_hash = sum(ord(c) * pow(base, i, prime) for i, c in enumerate(text[:pattern_len])) % prime
-
-    
-    for i in range(text_len - pattern_len + 1):
-        if pattern_hash == window_hash:
-            
-            if pattern == text[i:i+pattern_len]:
+    magic_number = 7
+    hash_func = lambda s: sum(ord(c) for c in s)
+    pattern_hash = hash_func(pattern) * magic_number
+    for i in range(len(text) - len(pattern) + 1):
+        substring = text[i:i+len(pattern)]
+        substring_hash = hash_func(substring) * magic_number
+        if substring_hash == pattern_hash:
+            if substring == pattern:
                 occurrences.append(i)
-        if i < text_len - pattern_len:
-            
-            window_hash = (window_hash - ord(text[i]) * pow(base, pattern_len-1, prime)) % prime
-            window_hash = (window_hash * base + ord(text[i+pattern_len])) % prime
     return occurrences
 
-
 if __name__ == '__main__':
-    print_occurrences(get_occurrences(*read_input()))
+    print_occurrences(get_occurrences(*read_input())
