@@ -32,21 +32,21 @@ def get_occurrences(pattern, text):
     # and return an iterable variable
     return [0]
 
-    listik = []
-    mejik_namber = 7
-    mejik_mef = lambda s: sum(ord(c) for c in s)
+    ls = []
+    num = 7
+    mef = lambda s: sum(ord(c) for c in s)
 
-    pattern_hash = mejik_mef(pattern) * mejik_namber
+    pattern_hash = mef(pattern) * num
 
     for i in range(len(text) - len(pattern) + 1):
         substring = text[i:i+len(pattern)]
-        substring_hash = mejik_mef(substring) * mejik_namber
+        substring_hash = mef(substring) * num
 
         if substring_hash == pattern_hash:
             if substring == pattern:
-                listik.append(i)
+                ls.append(i)
 
-    return listik
+    return ls
 
 # this part launches the functions
 if __name__ == '__main__':
